@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 public class GetHit : MonoBehaviour
 {
+    
     [Tooltip("Determines when the player is taking damage.")]
     public bool hurt = false;
 
@@ -11,6 +13,7 @@ public class GetHit : MonoBehaviour
     private PlayerMovement playerMovementScript;
     private Rigidbody rb;
     private Transform enemy;
+    
 
     private void Start()
     {
@@ -24,6 +27,7 @@ public class GetHit : MonoBehaviour
         {
             transform.Translate(Vector3.back * 20 * Time.deltaTime, Space.World);
             playerMovementScript.playerStats.canMove = false;
+            
         }
     }
     private void OnCollisionStay(Collision other)
@@ -36,6 +40,9 @@ public class GetHit : MonoBehaviour
                 rb.AddForce(enemy.forward * 1000);
                 rb.AddForce(transform.up * 500);
                 TakeDamage();
+                Debug.Log("player got hit boom");
+                
+                
             }
             if (other.gameObject.tag == "Trap")
             {
@@ -63,6 +70,16 @@ public class GetHit : MonoBehaviour
         playerMovementScript.playerStats.canMove = false;
         playerMovementScript.soundManager.PlayHitSound();
         StartCoroutine("Recover");
+        
+        playerMovementScript.playerStats.health--;
+        Debug.Log("player got hit");
+        Debug.Log("player loses health" + playerMovementScript.playerStats.health);
+        if (playerMovementScript.playerStats.health <= 0)
+        {
+            Debug.Log("player died");
+            playerMovementScript.playerStats.health = 0;
+        }
+
     }
     private IEnumerator Recover()
     {
